@@ -3,141 +3,110 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="JediKedy portfel vəb-saytı. Veb tərtibatçı, dizayner və həkim.">
     <title>JediKedy | Portfel</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
     <style>
         body { font-family: 'Inter', sans-serif; }
-        .glass { background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px); }
     </style>
 </head>
-<body class="bg-gray-50 text-gray-900 selection:bg-indigo-100">
+<body class="bg-white dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 transition-colors duration-300">
 
-    <nav class="fixed w-full z-50 bg-white/80 backdrop-blur-md border-b border-gray-100">
+    <nav class="fixed w-full z-50 bg-white/80 dark:bg-zinc-950/80 backdrop-blur-md border-b border-zinc-100 dark:border-zinc-900">
         <div class="max-w-5xl mx-auto px-6 h-16 flex items-center justify-between">
-            <a href="#top" class="text-xl font-bold tracking-tighter hover:text-indigo-600 transition-colors">JediKedy</a>
-            <div class="flex gap-6 text-sm font-medium text-gray-600">
-                <a href="#about" class="hover:text-indigo-600 transition-colors">Haqqımda</a>
-                <a href="#projects" class="hover:text-indigo-600 transition-colors">Layihələr</a>
-                <a href="#contact" class="hover:text-indigo-600 transition-colors">Əlaqə</a>
+            <a href="#" class="text-xl font-bold tracking-tighter">JediKedy</a>
+            <div class="flex gap-6 text-sm font-medium text-zinc-500">
+                <a href="#projects" class="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">Layihələr</a>
+                <a href="#contact" class="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">Əlaqə</a>
             </div>
         </div>
     </nav>
 
-    <header id="top" class="pt-32 pb-20 px-6">
-        <div class="max-w-5xl mx-auto">
-            <span class="inline-block py-1 px-3 rounded-full bg-indigo-50 text-indigo-600 text-xs font-bold uppercase tracking-wider mb-4">Portfel 2026</span>
-            <h1 class="text-5xl md:text-7xl font-extrabold tracking-tight mb-6">
-                Rəqəmsal dünyada <br>
-                <span class="text-indigo-600">faydalı izlər.</span>
-            </h1>
-            <p class="text-xl text-gray-600 max-w-2xl leading-relaxed mb-8">
-                Mən <span class="font-semibold text-gray-900">JediKedy</span> — Veb tərtibatçı, dizayner və həkiməm. 
-                Texnologiya ilə səhiyyənin kəsişməsində təmiz və praktik həllər yaradıram.
-            </p>
-            <div class="flex flex-wrap gap-4">
-                <a href="#projects" class="px-8 py-4 bg-gray-900 text-white rounded-xl font-medium hover:bg-gray-800 transition-all transform hover:-translate-y-1 shadow-lg shadow-gray-200">Layihələrə bax</a>
-                <a href="mailto:hyperwarriorx05@gmail.com" class="px-8 py-4 bg-white border border-gray-200 rounded-xl font-medium hover:bg-gray-50 transition-all">Məktub yaz</a>
-            </div>
-        </div>
-    </header>
-
-    <main class="max-w-5xl mx-auto px-6 space-y-24 pb-24">
+    <main class="max-w-5xl mx-auto px-6 space-y-32 pb-24">
         
-        <section id="about" class="grid md:grid-cols-3 gap-12 items-start scroll-mt-24">
-            <h2 class="text-2xl font-bold">Haqqımda</h2>
-            <div class="md:col-span-2 space-y-6 text-lg text-gray-600 leading-relaxed">
-                <p>
-                    Sadəliyə və funksionallığa inanıram. Tibbi biliklərimi texniki bacarıqlarımla birləşdirərək, istifadəçilər üçün həqiqətən dəyərli olan alətlər hazırlayıram.
-                </p>
-                <div class="grid grid-cols-2 gap-4 pt-4">
-                    <div class="p-4 bg-white border border-gray-100 rounded-2xl">
-                        <h4 class="font-bold text-gray-900">Kodlaşdırma</h4>
-                        <p class="text-sm">HTML, CSS, Tailwind, JS</p>
+        <header id="top" class="pt-32">
+            <span class="inline-block py-1 px-3 rounded-full bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 text-xs font-bold uppercase tracking-widest mb-6">Portfel 2026</span>
+            <h1 class="text-5xl md:text-7xl font-extrabold tracking-tight mb-6 leading-tight">
+                Veb tərtibatçı & <br>
+                <span class="text-indigo-600 dark:text-indigo-400 font-black">Həkim.</span>
+            </h1>
+            <p class="text-xl text-zinc-500 dark:text-zinc-400 max-w-2xl leading-relaxed mb-8">
+                Mən <span class="text-zinc-900 dark:text-white font-semibold">JediKedy</span>. 
+                Texnologiya ilə səhiyyənin kəsişməsində təmiz, sürətli və faydalı rəqəmsal həllər yaradıram.
+            </p>
+            <div class="flex flex-wrap gap-4 text-sm font-bold uppercase tracking-widest">
+                <a href="mailto:hyperwarriorx05@gmail.com" class="px-8 py-4 bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 rounded-2xl hover:scale-105 transition-transform">Əlaqə</a>
+            </div>
+        </header>
+
+        <section id="projects" class="scroll-mt-24">
+            <div class="mb-12">
+                <h2 class="text-3xl font-bold mb-2">Seçilmiş Layihələr</h2>
+                <p class="text-zinc-500 dark:text-zinc-400">Tibb və texnologiyanın kəsişməsində yaratdığım rəqəmsal həllər.</p>
+            </div>
+            
+            <div class="grid md:grid-cols-3 gap-6">
+                <article class="group bg-zinc-50 dark:bg-zinc-900/50 border border-zinc-100 dark:border-zinc-800 rounded-3xl p-6 hover:shadow-xl hover:shadow-green-500/5 hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between">
+                    <div>
+                        <div class="mb-5 inline-flex items-center justify-center w-12 h-12 bg-green-50 dark:bg-green-900/20 text-green-600 dark:text-green-400 rounded-2xl group-hover:bg-green-600 group-hover:text-white transition-colors">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
+                            </svg>
+                        </div>
+                        <h3 class="text-xl font-bold mb-2">AptekOnline</h3>
+                        <p class="text-sm text-zinc-500 dark:text-zinc-400 mb-6 leading-relaxed">Dərman vasitələrinin axtarışı və onlayn sifarişi üçün nəzərdə tutulmuş müasir aptek platforması.</p>
                     </div>
-                    <div class="p-4 bg-white border border-gray-100 rounded-2xl">
-                        <h4 class="font-bold text-gray-900">Təbabət</h4>
-                        <p class="text-sm">Analitik düşüncə və diaqnostika</p>
+                    <a href="https://jedikedy.github.io/aptekonline/" target="_blank" class="text-sm font-bold text-indigo-600 dark:text-indigo-400 hover:underline inline-flex items-center">
+                        İndi bax <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
+                    </a>
+                </article>
+
+                <article class="group bg-zinc-50 dark:bg-zinc-900/50 border border-zinc-100 dark:border-zinc-800 rounded-3xl p-6 hover:shadow-xl hover:shadow-blue-500/5 hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between">
+                    <div>
+                        <div class="mb-5 inline-flex items-center justify-center w-12 h-12 bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 rounded-2xl group-hover:bg-blue-600 group-hover:text-white transition-colors">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                            </svg>
+                        </div>
+                        <h3 class="text-xl font-bold mb-2">XBT-10 Axtarış</h3>
+                        <p class="text-sm text-zinc-500 dark:text-zinc-400 mb-6 leading-relaxed">Xəstəliklərin Beynəlxalq Təsnifatı (XBT-10) kodları üzrə sürətli və asan axtarış sistemi.</p>
                     </div>
-                </div>
+                    <a href="https://jedikedy.github.io/xbt10/" target="_blank" class="text-sm font-bold text-indigo-600 dark:text-indigo-400 hover:underline inline-flex items-center">
+                        İndi bax <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
+                    </a>
+                </article>
+
+                <article class="group bg-zinc-50 dark:bg-zinc-900/50 border border-zinc-100 dark:border-zinc-800 rounded-3xl p-6 hover:shadow-xl hover:shadow-purple-500/5 hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between">
+                    <div>
+                        <div class="mb-5 inline-flex items-center justify-center w-12 h-12 bg-purple-50 dark:bg-purple-900/20 text-purple-600 dark:text-purple-400 rounded-2xl group-hover:bg-purple-600 group-hover:text-white transition-colors">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                            </svg>
+                        </div>
+                        <h3 class="text-xl font-bold mb-2">Medblog</h3>
+                        <p class="text-sm text-zinc-500 dark:text-zinc-400 mb-6 leading-relaxed">Tibbi maarifləndirmə məqsədilə yaradılmış, oxunaqlı və minimal blog platforması.</p>
+                    </div>
+                    <a href="https://jedikedy.github.io/medblog" target="_blank" class="text-sm font-bold text-indigo-600 dark:text-indigo-400 hover:underline inline-flex items-center">
+                        İndi bax <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
+                    </a>
+                </article>
             </div>
         </section>
 
-        <hr class="border-gray-100">
-
-<section id="projects" class="scroll-mt-24">
-    <div class="flex justify-between items-end mb-12">
-        <div>
-            <h2 class="text-3xl font-bold mb-2 text-gray-900">Seçilmiş Layihələr</h2>
-            <p class="text-gray-500">Tibb və texnologiyanın kəsişməsində yaratdığım rəqəmsal həllər.</p>
-        </div>
-    </div>
-    
-    <div class="grid md:grid-cols-3 gap-6">
-        <article class="group bg-white border border-gray-100 rounded-3xl p-6 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between">
-            <div>
-                <div class="mb-5 inline-flex items-center justify-center w-12 h-12 bg-green-50 text-green-600 rounded-2xl group-hover:bg-green-600 group-hover:text-white transition-colors">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
-                    </svg>
-                </div>
-                <h3 class="text-xl font-bold mb-2">AptekOnline</h3>
-                <p class="text-sm text-gray-600 mb-6 leading-relaxed">Dərman vasitələrinin axtarışı və onlayn sifarişi üçün nəzərdə tutulmuş müasir aptek platforması.</p>
-            </div>
-            <a href="https://jedikedy.github.io/aptekonline/" target="_blank" class="text-sm font-bold text-indigo-600 hover:text-indigo-800 inline-flex items-center">
-                İndi bax <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
-            </a>
-        </article>
-
-        <article class="group bg-white border border-gray-100 rounded-3xl p-6 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between">
-            <div>
-                <div class="mb-5 inline-flex items-center justify-center w-12 h-12 bg-blue-50 text-blue-600 rounded-2xl group-hover:bg-blue-600 group-hover:text-white transition-colors">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-                    </svg>
-                </div>
-                <h3 class="text-xl font-bold mb-2">XBT-10 Axtarış</h3>
-                <p class="text-sm text-gray-600 mb-6 leading-relaxed">Xəstəliklərin Beynəlxalq Təsnifatı (XBT-10) kodları üzrə sürətli və asan axtarış sistemi.</p>
-            </div>
-            <a href="https://jedikedy.github.io/xbt10/" target="_blank" class="text-sm font-bold text-indigo-600 hover:text-indigo-800 inline-flex items-center">
-                İndi bax <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
-            </a>
-        </article>
-
-        <article class="group bg-white border border-gray-100 rounded-3xl p-6 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between">
-            <div>
-                <div class="mb-5 inline-flex items-center justify-center w-12 h-12 bg-purple-50 text-purple-600 rounded-2xl group-hover:bg-purple-600 group-hover:text-white transition-colors">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                    </svg>
-                </div>
-                <h3 class="text-xl font-bold mb-2">Medblog</h3>
-                <p class="text-sm text-gray-600 mb-6 leading-relaxed">Tibbi maarifləndirmə məqsədilə yaradılmış, oxunaqlı və minimal blog platforması.</p>
-            </div>
-            <a href="https://jedikedy.github.io/medblog" target="_blank" class="text-sm font-bold text-indigo-600 hover:text-indigo-800 inline-flex items-center">
-                İndi bax <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
-            </a>
-        </article>
-    </div>
-</section>
-
-        <section id="contact" class="bg-indigo-600 rounded-[3rem] p-12 text-center text-white scroll-mt-24 shadow-xl shadow-indigo-200">
-            <h2 class="text-3xl font-bold mb-4">Bir layihəniz var?</h2>
-            <p class="text-indigo-100 mb-8 max-w-lg mx-auto text-lg">
-                Fikir mübadiləsi aparmaq və ya əməkdaşlıq etmək üçün mənə yazın. Həmişə yeni çağırışlara açığam.
-            </p>
-            <a href="mailto:hyperwarriorx05@gmail.com" class="inline-block px-10 py-4 bg-white text-indigo-600 rounded-full font-bold hover:bg-indigo-50 transition-colors">
+        <section id="contact" class="scroll-mt-24 border-t border-zinc-100 dark:border-zinc-900 pt-24 pb-12">
+            <h2 class="text-4xl font-extrabold mb-6">Bir layihəniz var? <br>Gəlin danışaq.</h2>
+            <a href="mailto:hyperwarriorx05@gmail.com" class="text-2xl font-bold text-indigo-600 dark:text-indigo-400 underline decoration-4 underline-offset-8 hover:text-zinc-900 dark:hover:text-white transition-colors">
                 hyperwarriorx05@gmail.com
             </a>
         </section>
 
     </main>
 
-    <footer class="py-12 border-t border-gray-100 text-center">
-        <p class="text-gray-400 text-sm">© 2026 JediKedy. Səhiyyə və texnologiyanın harmoniyası.</p>
+    <footer class="max-w-5xl mx-auto px-6 py-12 border-t border-zinc-100 dark:border-zinc-900 text-sm text-zinc-400 flex flex-col md:flex-row justify-between gap-4">
+        <p>© 2026 JediKedy. Bütün hüquqlar qorunur.</p>
+        <div class="flex gap-6">
+            <span class="italic uppercase tracking-tighter">Code + Medicine</span>
+        </div>
     </footer>
 
 </body>
