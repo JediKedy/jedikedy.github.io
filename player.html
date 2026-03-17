@@ -1,1097 +1,471 @@
 <!DOCTYPE html>
-<html lang="tr">
+<html lang="tr" class="h-full">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>🌟 CANLI TV</title>
-<script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
-<style>
-  :root {
-    --bg:     #080b10;
-    --bg2:    #0e1318;
-    --bg3:    #141a22;
-    --border: rgba(255,255,255,0.06);
-    --accent: #e8373d;
-    --gold:   #f5c842;
-    --text:   #e8eaf0;
-    --muted:  #5a6478;
-  }
-
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-
-  body {
-    font-family: 'DM Sans', sans-serif;
-    background: var(--bg);
-    color: var(--text);
-    min-height: 100vh;
-    overflow-x: hidden;
-  }
-
-  /* Film grain */
-  body::before {
-    content: '';
-    position: fixed; inset: 0;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
-    pointer-events: none;
-    z-index: 9999;
-    opacity: 0.4;
-  }
-
-  /* ══ HEADER ══ */
-  header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 16px 28px;
-    background: rgba(8,11,16,0.97);
-    backdrop-filter: blur(20px);
-    border-bottom: 1px solid var(--border);
-    position: sticky;
-    top: 0;
-    z-index: 100;
-  }
-
-  .logo {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 26px;
-    letter-spacing: 3px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
-
-  .logo-dot {
-    width: 10px; height: 10px;
-    background: var(--accent);
-    border-radius: 50%;
-    animation: pulseDot 1.5s infinite;
-  }
-
-  @keyframes pulseDot {
-    0%,100% { opacity:1; transform:scale(1); box-shadow:0 0 0 0 rgba(232,55,61,.4); }
-    50%      { opacity:.7; transform:scale(1.1); box-shadow:0 0 0 7px rgba(232,55,61,0); }
-  }
-
-  .header-right {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-  }
-
-  .search-bar {
-    display: flex;
-    align-items: center;
-    background: var(--bg3);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 8px 14px;
-    gap: 8px;
-    transition: border-color .2s;
-  }
-
-  .search-bar:focus-within { border-color: rgba(232,55,61,.4); }
-
-  .search-bar input {
-    background: none; border: none; outline: none;
-    color: var(--text);
-    font-family: 'DM Sans', sans-serif;
-    font-size: 13px;
-    width: 200px;
-  }
-
-  .search-bar input::placeholder { color: var(--muted); }
-
-  #ch-counter {
-    font-size: 11px;
-    color: var(--muted);
-    font-weight: 600;
-    letter-spacing: 1px;
-  }
-
-  /* ══ LAYOUT ══ */
-  .app {
-    display: grid;
-    grid-template-columns: 280px 1fr;
-    height: calc(100vh - 61px);
-  }
-
-  /* ══ SIDEBAR ══ */
-  .sidebar {
-    background: var(--bg2);
-    border-right: 1px solid var(--border);
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-  }
-
-  /* Tabs */
-  .sidebar-tabs {
-    display: flex;
-    border-bottom: 1px solid var(--border);
-    padding: 0 16px;
-    flex-shrink: 0;
-  }
-
-  .tab-btn {
-    flex: 1;
-    background: none; border: none;
-    border-bottom: 2px solid transparent;
-    color: var(--muted);
-    font-family: 'DM Sans', sans-serif;
-    font-size: 11px; font-weight: 600;
-    letter-spacing: 1px; text-transform: uppercase;
-    padding: 14px 8px;
-    cursor: pointer;
-    transition: all .2s;
-  }
-
-  .tab-btn.active { color: var(--text); border-bottom-color: var(--accent); }
-
-  /* Category pills */
-  .cat-bar {
-    display: flex;
-    gap: 6px;
-    padding: 12px 16px;
-    overflow-x: auto;
-    border-bottom: 1px solid var(--border);
-    flex-shrink: 0;
-  }
-
-  .cat-bar::-webkit-scrollbar { display: none; }
-
-  .cat-pill {
-    background: var(--bg3);
-    border: 1px solid var(--border);
-    color: var(--muted);
-    font-family: 'DM Sans', sans-serif;
-    font-size: 11px; font-weight: 500;
-    padding: 5px 12px;
-    border-radius: 20px;
-    cursor: pointer;
-    white-space: nowrap;
-    transition: all .2s;
-  }
-
-  .cat-pill.active, .cat-pill:hover {
-    background: var(--accent);
-    border-color: var(--accent);
-    color: #fff;
-  }
-
-  .ch-count {
-    padding: 8px 16px 4px;
-    font-size: 11px;
-    color: var(--muted);
-    flex-shrink: 0;
-  }
-
-  /* Channel list scroll area */
-  .channel-list {
-    overflow-y: auto;
-    flex: 1;
-    padding: 6px 8px;
-  }
-
-  .channel-list::-webkit-scrollbar { width: 4px; }
-  .channel-list::-webkit-scrollbar-thumb { background: var(--bg3); border-radius: 2px; }
-
-  /* Section title inside list */
-  .section-label {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 13px;
-    letter-spacing: 2px;
-    color: var(--muted);
-    padding: 10px 4px 6px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-
-  .section-label::after {
-    content: '';
-    flex: 1;
-    height: 1px;
-    background: var(--border);
-  }
-
-  /* Channel item */
-  .channel {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 10px 12px;
-    border-radius: 10px;
-    margin-bottom: 4px;
-    cursor: pointer;
-    border: 1px solid transparent;
-    transition: all .2s;
-    background: rgba(255,255,255,0.02);
-  }
-
-  .channel:hover { background: var(--bg3); }
-
-  .channel.active {
-    background: rgba(232,55,61,.1);
-    border-color: rgba(232,55,61,.25);
-  }
-
-  .ch-logo {
-    width: 44px; height: 44px;
-    border-radius: 10px;
-    background: var(--bg3);
-    border: 1px solid var(--border);
-    display: flex; align-items: center; justify-content: center;
-    font-size: 20px;
-    flex-shrink: 0;
-    overflow: hidden;
-  }
-
-  .ch-logo img {
-    width: 100%; height: 100%;
-    object-fit: contain;
-    padding: 3px;
-    background: #0e1318;
-  }
-
-  .ch-info { flex: 1; min-width: 0; }
-
-  .ch-name {
-    font-size: 13px; font-weight: 600;
-    color: var(--text);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-
-  .ch-meta {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    margin-top: 2px;
-  }
-
-  .live-badge {
-    background: var(--accent); color: #fff;
-    font-size: 9px; font-weight: 700;
-    padding: 2px 5px; border-radius: 3px;
-    flex-shrink: 0;
-  }
-
-  .ch-group {
-    font-size: 11px; color: var(--muted);
-    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-  }
-
-  .fav-btn {
-    background: none; border: none;
-    color: var(--muted);
-    cursor: pointer;
-    font-size: 16px;
-    transition: color .2s, transform .2s;
-    flex-shrink: 0;
-    padding: 3px;
-    line-height: 1;
-  }
-
-  .fav-btn:hover  { color: var(--gold); transform: scale(1.2); }
-  .fav-btn.on     { color: var(--gold); }
-
-  /* Loading */
-  .loading {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 12px;
-    padding: 40px 20px;
-    color: var(--muted);
-    font-size: 12px;
-  }
-
-  .spin {
-    width: 32px; height: 32px;
-    border: 2px solid var(--bg3);
-    border-top-color: var(--accent);
-    border-radius: 50%;
-    animation: spin .8s linear infinite;
-  }
-
-  @keyframes spin { to { transform: rotate(360deg); } }
-
-  /* ══ MAIN ══ */
-  .main {
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-    background: var(--bg);
-  }
-
-  /* ══ PLAYER ══ */
-  .player-wrap { position: relative; background: #000; flex-shrink: 0; }
-
-  .player-ratio {
-    position: relative;
-    width: 100%;
-    padding-top: 50%;
-    background: #000;
-    overflow: hidden;
-  }
-
-  .player-idle {
-    position: absolute; inset: 0;
-    background: radial-gradient(ellipse at center, #0d1520 0%, #000 70%);
-    display: flex; flex-direction: column;
-    align-items: center; justify-content: center;
-    gap: 16px;
-  }
-
-  .idle-icon {
-    font-size: 64px; opacity: .13;
-    animation: breathe 3s ease-in-out infinite;
-  }
-
-  @keyframes breathe {
-    0%,100% { opacity:.08; transform:scale(1); }
-    50%      { opacity:.2;  transform:scale(1.05); }
-  }
-
-  .idle-txt {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 18px; letter-spacing: 4px;
-    color: var(--muted);
-  }
-
-  #video {
-    position: absolute; inset: 0;
-    width: 100%; height: 100%;
-    background: #000;
-    display: none;
-  }
-
-  /* Fullscreen hint */
-  .fs-hint {
-    position: absolute; inset: 0;
-    display: flex; align-items: center; justify-content: center;
-    opacity: 0; transition: opacity .2s;
-    pointer-events: none;
-  }
-
-  .player-ratio:hover .fs-hint { opacity: 1; }
-
-  .fs-btn {
-    background: rgba(0,0,0,.6);
-    border: 1px solid rgba(255,255,255,.2);
-    border-radius: 8px; color: #fff;
-    font-size: 12px; padding: 6px 14px;
-    backdrop-filter: blur(4px);
-    pointer-events: all;
-    cursor: pointer;
-    font-family: 'DM Sans', sans-serif; font-weight: 500;
-  }
-
-  /* ══ CONTROLS BAR ══ */
-  .ctrl-bar {
-    background: linear-gradient(to right, var(--bg2), var(--bg3));
-    border-top: 1px solid var(--border);
-    padding: 12px 20px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 16px;
-    flex-shrink: 0;
-  }
-
-  .np {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    flex: 1; min-width: 0;
-  }
-
-  .np-logo {
-    width: 36px; height: 36px;
-    border-radius: 8px;
-    background: var(--bg3);
-    border: 1px solid var(--border);
-    display: flex; align-items: center; justify-content: center;
-    overflow: hidden; flex-shrink: 0;
-    font-size: 18px;
-  }
-
-  .np-logo img {
-    width: 100%; height: 100%;
-    object-fit: contain; padding: 2px; background: #0e1318;
-  }
-
-  .np-title {
-    font-size: 13px; font-weight: 700;
-    display: flex; align-items: center; gap: 6px;
-    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-  }
-
-  .on-air {
-    background: var(--accent); color: #fff;
-    font-size: 9px; font-weight: 700;
-    padding: 2px 6px; border-radius: 3px;
-    animation: blink 2s infinite; flex-shrink: 0;
-  }
-
-  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:.5} }
-
-  .np-group { font-size: 11px; color: var(--muted); margin-top: 1px; }
-
-  .ctrl-btns { display: flex; align-items: center; gap: 8px; }
-
-  .cb {
-    width: 36px; height: 36px;
-    border-radius: 8px;
-    background: var(--bg3);
-    border: 1px solid var(--border);
-    color: var(--text);
-    cursor: pointer;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 14px;
-    transition: all .2s;
-  }
-
-  .cb:hover { background: var(--accent); border-color: var(--accent); color: #fff; transform: translateY(-1px); }
-  .cb.danger:hover { background: #c0392b; border-color: #c0392b; }
-
-  .vol-wrap { display: flex; align-items: center; gap: 8px; }
-
-  .vol-sl {
-    -webkit-appearance: none; appearance: none;
-    width: 80px; height: 4px;
-    background: var(--bg3); border-radius: 2px;
-    outline: none; cursor: pointer;
-  }
-
-  .vol-sl::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    width: 14px; height: 14px;
-    background: var(--accent); border-radius: 50%; cursor: pointer;
-  }
-
-  /* ══ INFO BAR ══ */
-  .info-bar { flex: 1; overflow-y: auto; padding: 16px 20px; }
-  .info-bar::-webkit-scrollbar { width: 4px; }
-  .info-bar::-webkit-scrollbar-thumb { background: var(--bg3); border-radius: 2px; }
-
-  .sec-title {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 14px; letter-spacing: 2px;
-    color: var(--muted); margin-bottom: 12px;
-    display: flex; align-items: center; gap: 8px;
-  }
-
-  .sec-title::after { content: ''; flex: 1; height: 1px; background: var(--border); }
-
-  .rel-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-    gap: 10px;
-  }
-
-  .rel-card {
-    background: var(--bg2); border: 1px solid var(--border);
-    border-radius: 10px; padding: 12px 8px;
-    cursor: pointer; text-align: center;
-    transition: all .2s;
-  }
-
-  .rel-card:hover { border-color: rgba(232,55,61,.3); background: var(--bg3); transform: translateY(-2px); }
-  .rel-card .rc-icon { font-size: 26px; margin-bottom: 6px; }
-  .rel-card .rc-icon img { width: 30px; height: 30px; object-fit: contain; }
-  .rel-card .rc-name { font-size: 11px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .rel-card .rc-group { font-size: 10px; color: var(--muted); margin-top: 2px; }
-
-  /* ══ SLEEP MODAL ══ */
-  .modal-overlay {
-    position: fixed; inset: 0;
-    background: rgba(0,0,0,.8); backdrop-filter: blur(8px);
-    z-index: 200; display: none;
-    align-items: center; justify-content: center;
-  }
-
-  .modal-overlay.open { display: flex; }
-
-  .modal {
-    background: var(--bg2); border: 1px solid var(--border);
-    border-radius: 16px; padding: 28px; width: 320px;
-    animation: slideUp .3s ease;
-  }
-
-  @keyframes slideUp { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
-
-  .modal-title {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 20px; letter-spacing: 2px;
-    margin-bottom: 20px;
-  }
-
-  .timer-opts { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 20px; }
-
-  .t-opt {
-    background: var(--bg3); border: 1px solid var(--border);
-    border-radius: 8px; padding: 10px; text-align: center;
-    cursor: pointer; font-size: 13px; font-weight: 600;
-    color: var(--text); transition: all .2s;
-  }
-
-  .t-opt:hover, .t-opt.sel {
-    background: rgba(232,55,61,.15);
-    border-color: var(--accent);
-    color: var(--accent);
-  }
-
-  .t-cd {
-    text-align: center;
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 13px; letter-spacing: 2px;
-    color: var(--gold); padding: 6px 0;
-    display: none;
-  }
-
-  .modal-acts { display: flex; gap: 10px; }
-
-  .btn {
-    flex: 1; padding: 10px; border-radius: 8px; border: none;
-    font-family: 'DM Sans', sans-serif;
-    font-size: 13px; font-weight: 600;
-    cursor: pointer; transition: all .2s;
-  }
-
-  .btn-p { background: var(--accent); color: #fff; }
-  .btn-p:hover { background: #c0392b; }
-  .btn-s { background: var(--bg3); color: var(--muted); border: 1px solid var(--border); }
-  .btn-s:hover { color: var(--text); }
-
-  /* ══ TOAST ══ */
-  .toast {
-    position: fixed; bottom: 24px; right: 24px;
-    background: var(--bg2); border: 1px solid var(--border);
-    border-left: 3px solid var(--accent);
-    border-radius: 8px; padding: 12px 18px;
-    font-size: 13px; font-weight: 500;
-    z-index: 500;
-    transform: translateY(60px); opacity: 0;
-    transition: all .3s; max-width: 280px;
-  }
-
-  .toast.show { transform: translateY(0); opacity: 1; }
-
-  /* DEV BTN */
-  .dev-btn {
-    display: flex; align-items: center;
-    background: var(--bg3); border: 1px solid var(--border);
-    border-radius: 8px; padding: 8px 14px;
-    color: var(--text); font-family: 'DM Sans', sans-serif;
-    font-size: 12px; font-weight: 600;
-    text-decoration: none; white-space: nowrap; transition: all .2s;
-  }
-  .dev-btn:hover { background: #229ED9; border-color: #229ED9; color: #fff; }
-
-  ::-webkit-scrollbar { width: 4px; height: 4px; }
-  ::-webkit-scrollbar-thumb { background: rgba(255,255,255,.08); border-radius: 2px; }
-
-  /* ══ MOBİL ══ */
-  @media (max-width: 768px) {
-
-    header { padding: 11px 14px; }
-    .logo  { font-size: 20px; }
-    .logo-dot { width: 8px; height: 8px; }
-    .header-right { gap: 8px; }
-    #ch-counter { display: none; }
-
-    .search-bar { padding: 7px 10px; gap: 6px; }
-    .search-bar input { width: 110px; font-size: 12px; }
-
-    /* Sidebar alta, main üste */
-    .app {
-      grid-template-columns: 1fr;
-      height: auto;
-      min-height: 100vh;
-    }
-
-    .main    { order: 1; }
-    .sidebar { order: 2; border-right: none; border-top: 1px solid var(--border); }
-
-    /* Player 16:9 */
-    .player-ratio { padding-top: 56.25%; }
-    .idle-icon { font-size: 40px; }
-    .idle-txt  { font-size: 13px; letter-spacing: 2px; }
-
-    /* Controls 2 satır */
-    .ctrl-bar {
-      flex-wrap: wrap;
-      padding: 10px 14px;
-      gap: 8px;
-    }
-
-    .np          { width: 100%; min-width: 0; }
-    .np-logo     { width: 30px; height: 30px; }
-    .np-title    { font-size: 12px; }
-    .np-group    { font-size: 10px; }
-
-    .ctrl-btns   { width: 100%; justify-content: space-between; gap: 5px; }
-    .cb          { flex: 1; height: 34px; font-size: 13px; }
-    .vol-wrap    { flex: 2; gap: 5px; }
-    .vol-sl      { width: 100%; }
-
-    /* Sidebar içi */
-    .sidebar-tabs  { padding: 0 12px; }
-    .tab-btn       { font-size: 10px; padding: 11px 4px; }
-    .cat-bar       { padding: 10px 12px; }
-    .ch-count      { padding: 6px 12px 2px; }
-    .channel-list  { max-height: 42vh; }
-
-    .channel  { padding: 8px 10px; gap: 10px; }
-    .ch-logo  { width: 38px; height: 38px; border-radius: 8px; flex-shrink: 0; }
-    .ch-name  { font-size: 12px; }
-    .ch-group { font-size: 10px; }
-
-    /* Info bar */
-    .info-bar { padding: 12px 14px; }
-    .rel-grid { grid-template-columns: repeat(auto-fill, minmax(80px,1fr)); gap: 8px; }
-    .rel-card { padding: 10px 6px; }
-    .rel-card .rc-name  { font-size: 10px; }
-    .rel-card .rc-group { font-size: 9px; }
-  }
-
-  /* 380px altı */
-  @media (max-width: 380px) {
-    .search-bar input { width: 80px; }
-    .vol-wrap { display: none; }
-  }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CANLI TV PRO</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
+        
+        /* Film Grain Overlay */
+        .grain::before {
+            content: "";
+            position: fixed; inset: 0;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+            pointer-events: none; z-index: 50; opacity: 0.2;
+        }
+    </style>
 </head>
-<body>
+<body class="bg-[#0f172a] text-slate-200 h-full overflow-hidden grain">
 
-<!-- HEADER -->
-<header>
-  <div class="logo">
-    <div class="logo-dot"></div>
-    CANLI TV
-  </div>
-  <div class="header-right">
-    <span id="ch-counter"></span>
-    <a href="https://t.me/Zaferri" target="_blank" rel="noopener" class="dev-btn">Developer'ı Görüntüle</a>
-    <div class="search-bar">
-      <span style="font-size:14px;color:var(--muted)">🔍</span>
-      <input type="text" placeholder="Kanal ara..." onkeyup="search(this.value)">
-    </div>
-  </div>
-</header>
-
-<div class="app">
-
-  <!-- ══ SIDEBAR ══ -->
-  <aside class="sidebar">
-
-    <div class="sidebar-tabs">
-      <button class="tab-btn active" onclick="switchTab('all', this)">TÜM KANALLAR</button>
-      <button class="tab-btn" onclick="switchTab('fav', this)">⭐ FAVORİLER</button>
-    </div>
-
-    <div class="cat-bar" id="catBar">
-      <button class="cat-pill active" onclick="filterCat('', this)">Tümü</button>
-    </div>
-
-    <div class="ch-count" id="chCount"></div>
-
-    <div class="channel-list" id="channelList">
-      <div class="loading">
-        <div class="spin"></div>
-        Kanallar yükleniyor...
-      </div>
-    </div>
-
-  </aside>
-
-  <!-- ══ MAIN ══ -->
-  <main class="main">
-
-    <!-- PLAYER -->
-    <div class="player-wrap">
-      <div class="player-ratio">
-
-        <div class="player-idle" id="playerIdle">
-          <div class="idle-icon">📺</div>
-          <div class="idle-txt">İZLEMEK İÇİN KANAL SEÇİN</div>
+<div class="flex flex-col h-full">
+    <header class="flex items-center justify-between px-6 py-4 bg-slate-900/80 backdrop-blur-xl border-b border-slate-800 shrink-0 z-40">
+        <div class="flex items-center gap-3">
+            <div class="w-3 h-3 bg-red-500 rounded-full animate-pulse shadow-[0_0_10px_rgba(239,68,68,0.5)]"></div>
+            <h1 class="text-xl font-bold tracking-tighter text-white">CANLI<span class="text-red-500">TV</span></h1>
         </div>
 
-        <video id="video" controls playsinline></video>
-
-        <div class="fs-hint">
-          <button class="fs-btn" onclick="openFS()">⛶ TAM EKRAN</button>
+        <div class="flex items-center gap-4">
+            <span id="ch-counter" class="hidden md:block text-xs font-medium text-slate-500 tracking-widest uppercase">0 KANAL</span>
+            <a href="https://github.com/JediKedy/jedikedy.github.io/blob/main/player.html" target="_blank" class="hidden sm:flex items-center gap-2 bg-sky-600/10 hover:bg-sky-600/20 text-sky-400 px-4 py-2 rounded-lg text-sm font-semibold transition-all">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69a.2.2 0 00-.05-.18c-.06-.05-.14-.03-.21-.02-.09.02-1.49.95-4.22 2.79-.4.27-.76.41-1.08.4-.36-.01-1.04-.2-1.55-.37-.63-.2-1.12-.31-1.08-.66.02-.18.27-.36.74-.55 2.92-1.27 4.86-2.11 5.83-2.51 2.78-1.16 3.35-1.36 3.73-1.36.08 0 .27.02.39.12.1.08.13.19.14.27-.01.06.01.24 0 .38z"/></svg>
+                Developer
+            </a>
+            <div class="relative">
+                <span class="absolute inset-y-0 left-3 flex items-center text-slate-500">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                </span>
+                <input type="text" placeholder="Kanal ara..." onkeyup="search(this.value)" 
+                    class="bg-slate-800 border-none text-slate-200 text-sm rounded-xl pl-10 pr-4 py-2 w-40 md:w-64 focus:ring-2 focus:ring-red-500 transition-all outline-none">
+            </div>
         </div>
+    </header>
 
-      </div>
+    <div class="flex flex-1 overflow-hidden flex-col md:flex-row">
+        
+        <aside class="w-full md:w-[320px] bg-slate-900/50 border-r border-slate-800 flex flex-col shrink-0">
+            <div class="flex p-2 bg-slate-900">
+                <button onclick="switchTab('all', this)" class="tab-btn flex-1 py-3 text-xs font-bold tracking-widest uppercase rounded-lg transition-all text-white bg-slate-800 shadow-lg">TÜMÜ</button>
+                <button onclick="switchTab('fav', this)" class="tab-btn flex-1 py-3 text-xs font-bold tracking-widest uppercase rounded-lg transition-all text-slate-500 hover:text-white">FAVORİLER</button>
+            </div>
 
-      <!-- CONTROLS -->
-      <div class="ctrl-bar">
-        <div class="np">
-          <div class="np-logo" id="npLogo">📺</div>
-          <div style="min-width:0">
-            <div class="np-title" id="npTitle">Kanal Seçilmedi</div>
-            <div class="np-group" id="npGroup">Bir kanal seçin</div>
-          </div>
-        </div>
+            <div id="catBar" class="flex gap-2 p-3 overflow-x-auto hide-scrollbar border-b border-slate-800/50">
+                </div>
 
-        <div class="ctrl-btns">
-          <div class="vol-wrap">
-            <span style="font-size:14px">🔊</span>
-            <input type="range" class="vol-sl" min="0" max="100" value="90" oninput="setVol(this.value)">
-          </div>
-          <button class="cb" onclick="prevCh()" title="Önceki (←)">⏮</button>
-          <button class="cb" onclick="nextCh()" title="Sonraki (→)">⏭</button>
-          <button class="cb" id="favCurBtn" onclick="favToggleCurrent()" title="Favoriye ekle">☆</button>
-          <button class="cb" onclick="openSleep()" title="Uyku zamanlayıcı">⏱</button>
-          <button class="cb danger" onclick="stopPlayer()" title="Durdur (Esc)">⏹</button>
-        </div>
-      </div>
+            <div class="px-4 py-2 flex justify-between items-center bg-slate-900/30">
+                <span id="chCount" class="text-[10px] font-bold text-slate-500 uppercase tracking-tighter">Yükleniyor...</span>
+            </div>
+
+            <div id="channelList" class="flex-1 overflow-y-auto custom-scrollbar p-2 space-y-1">
+                <div class="flex flex-col items-center justify-center py-12 gap-3 opacity-50">
+                    <div class="w-8 h-8 border-2 border-red-500 border-t-transparent rounded-full animate-spin"></div>
+                    <span class="text-xs font-medium uppercase tracking-widest">Liste Hazırlanıyor</span>
+                </div>
+            </div>
+        </aside>
+
+        <main class="flex-1 flex flex-col bg-slate-950 overflow-hidden relative">
+            
+            <div class="w-full bg-black relative group shadow-2xl">
+                <div class="aspect-video w-full max-h-[70vh] flex items-center justify-center relative bg-slate-900">
+                    
+                    <div id="playerIdle" class="absolute inset-0 z-10 flex flex-col items-center justify-center gap-4 bg-gradient-to-t from-slate-950 to-slate-900">
+                        <div class="p-6 bg-slate-800/50 rounded-full animate-pulse">
+                            <svg class="w-12 h-12 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                        </div>
+                        <span class="text-sm font-bold tracking-widest text-slate-500 uppercase">İzlemek için bir kanal seçin</span>
+                    </div>
+
+                    <video id="video" class="w-full h-full hidden" controls playsinline></video>
+                    
+                    <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-20">
+                        <button onclick="openFS()" class="pointer-events-auto bg-black/60 backdrop-blur-md border border-white/10 text-white px-6 py-2.5 rounded-full text-xs font-bold tracking-widest hover:bg-red-600 transition-colors uppercase">
+                            Tam Ekran
+                        </button>
+                    </div>
+                </div>
+
+                <div class="flex flex-col md:flex-row items-center gap-4 p-4 bg-slate-900 border-t border-slate-800">
+                    <div class="flex items-center gap-4 flex-1 w-full min-w-0">
+                        <div id="npLogo" class="w-12 h-12 rounded-xl bg-slate-800 flex items-center justify-center shrink-0 border border-slate-700 overflow-hidden">
+                            <svg class="w-6 h-6 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"/></svg>
+                        </div>
+                        <div class="min-w-0">
+                            <div class="flex items-center gap-2">
+                                <h2 id="npTitle" class="text-sm font-bold text-white truncate uppercase tracking-tight">Kanal Seçilmedi</h2>
+                                <span id="onAirBadge" class="hidden px-2 py-0.5 rounded bg-red-500 text-[10px] font-black animate-pulse">CANLI</span>
+                            </div>
+                            <p id="npGroup" class="text-xs text-slate-500 font-medium">Lütfen kanal listesine göz atın</p>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center gap-2 shrink-0">
+                        <div class="flex items-center gap-3 bg-slate-800/50 px-4 py-2 rounded-xl border border-slate-700/50">
+                            <svg class="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"/></svg>
+                            <input type="range" class="w-20 h-1.5 accent-red-500 bg-slate-700 rounded-lg cursor-pointer" min="0" max="100" value="100" oninput="setVol(this.value)">
+                        </div>
+                        <button onclick="prevCh()" class="ctrl-btn" title="Geri">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 19l-7-7 7-7m8 14l-7-7 7-7"/></svg>
+                        </button>
+                        <button onclick="nextCh()" class="ctrl-btn" title="İleri">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 5l7 7-7 7M5 5l7 7-7 7"/></svg>
+                        </button>
+                        <button id="favCurBtn" onclick="favToggleCurrent()" class="ctrl-btn">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>
+                        </button>
+                        <button onclick="openSleep()" class="ctrl-btn">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                        </button>
+                        <button onclick="stopPlayer()" class="ctrl-btn text-red-500 bg-red-500/10 hover:bg-red-500 hover:text-white border-red-500/20">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex-1 overflow-y-auto p-6 custom-scrollbar">
+                <h3 class="text-[10px] font-black text-slate-500 tracking-[0.2em] uppercase mb-6 flex items-center gap-3">
+                    Önerilen Yayınlar <span class="h-[1px] flex-1 bg-slate-800"></span>
+                </h3>
+                <div id="relGrid" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 xl:grid-cols-6 gap-4">
+                    </div>
+            </div>
+        </main>
     </div>
-
-    <!-- ÖNERILEN -->
-    <div class="info-bar">
-      <div class="sec-title">ÖNERİLEN KANALLAR</div>
-      <div class="rel-grid" id="relGrid"></div>
-    </div>
-
-  </main>
 </div>
 
-<!-- SLEEP MODAL -->
-<div class="modal-overlay" id="sleepModal">
-  <div class="modal">
-    <div class="modal-title">⏱ UYKU ZAMANLAYICISI</div>
-    <div class="timer-opts">
-      <div class="t-opt" onclick="pickTimer(15,this)">15 dk</div>
-      <div class="t-opt sel" onclick="pickTimer(30,this)">30 dk</div>
-      <div class="t-opt" onclick="pickTimer(60,this)">1 saat</div>
-      <div class="t-opt" onclick="pickTimer(90,this)">1.5 saat</div>
-      <div class="t-opt" onclick="pickTimer(120,this)">2 saat</div>
-      <div class="t-opt" onclick="pickTimer(0,this)">İptal Et</div>
+<div id="sleepModal" class="fixed inset-0 z-[100] hidden items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm">
+    <div class="bg-slate-900 border border-slate-800 p-8 rounded-3xl w-full max-w-sm shadow-2xl scale-in">
+        <h2 class="text-xl font-bold mb-6 flex items-center gap-3">
+            <svg class="w-6 h-6 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            Uyku Zamanlayıcısı
+        </h2>
+        <div class="grid grid-cols-2 gap-3 mb-8">
+            <button onclick="pickTimer(15,this)" class="t-opt">15 Dakika</button>
+            <button onclick="pickTimer(30,this)" class="t-opt active">30 Dakika</button>
+            <button onclick="pickTimer(60,this)" class="t-opt">1 Saat</button>
+            <button onclick="pickTimer(0,this)" class="t-opt col-span-2 text-red-400">İptal Et</button>
+        </div>
+        <div id="timerCd" class="text-center text-xs font-bold text-amber-500 mb-6 hidden"></div>
+        <div class="flex gap-3">
+            <button onclick="closeSleep()" class="flex-1 py-3 text-sm font-bold bg-slate-800 rounded-xl hover:bg-slate-700 transition-colors">Vazgeç</button>
+            <button onclick="startSleep()" class="flex-1 py-3 text-sm font-bold bg-red-600 rounded-xl hover:bg-red-700 transition-colors shadow-lg shadow-red-900/20">Başlat</button>
+        </div>
     </div>
-    <div class="t-cd" id="timerCd"></div>
-    <div class="modal-acts">
-      <button class="btn btn-s" onclick="closeSleep()">Vazgeç</button>
-      <button class="btn btn-p" onclick="startSleep()">Başlat</button>
-    </div>
-  </div>
 </div>
 
-<div class="toast" id="toast"></div>
+<div id="toast" class="fixed bottom-8 left-1/2 -translate-x-1/2 z-[200] px-6 py-3 bg-white text-slate-950 text-xs font-bold rounded-full shadow-2xl opacity-0 translate-y-4 transition-all pointer-events-none uppercase tracking-widest"></div>
 
 <script>
-/* ══════════════════════════════════════════
-   M3U + PLAYER — senin çalışan mantığın
-══════════════════════════════════════════ */
+/* ══ CONFIG ══ */
 const M3U_URL = "https://raw.githubusercontent.com/JediKedy/tivimate/refs/heads/main/tivimate.m3u";
 
 let hls;
-let favorites   = JSON.parse(localStorage.getItem("favorites") || "[]");
-let allChannels = [];   // { name, url, group, logo }
-let activeDiv   = null;
-let currentCh   = null;
-let currentTab  = "all";
-let currentCat  = "";
-let searchQ     = "";
+let favorites = JSON.parse(localStorage.getItem("favorites") || "[]");
+let allChannels = [];
+let currentCh = null;
+let currentTab = "all";
+let currentCat = "";
+let searchQ = "";
 
-/* ── M3U FETCH ── */
-fetch(M3U_URL)
-  .then(r => r.text())
-  .then(text => {
-    const lines = text.split("\n");
-    for (let i = 0; i < lines.length; i++) {
-      if (lines[i].startsWith("#EXTINF")) {
-        const name  = lines[i].split(",")[1]?.trim() || "Kanal";
-        const url   = lines[i + 1]?.trim() || "";
-        if (!url.startsWith("http")) continue;
-        const gm    = lines[i].match(/group-title="([^"]*)"/i);
-        const lm    = lines[i].match(/tvg-logo="([^"]*)"/i);
-        allChannels.push({
-          name,
-          url,
-          group: gm ? gm[1].trim() || "Genel" : "Genel",
-          logo:  lm ? lm[1].trim() : ""
-        });
-      }
+const video = document.getElementById("video");
+const channelList = document.getElementById("channelList");
+
+/* ══ TAILWIND HELPERS ══ */
+const ctrlBtnClass = "p-2.5 rounded-xl bg-slate-800 border border-slate-700/50 hover:bg-slate-700 text-slate-300 transition-all active:scale-95";
+document.querySelectorAll('.ctrl-btn').forEach(btn => btn.className = ctrlBtnClass);
+
+const tOptClass = "p-3 text-xs font-bold bg-slate-800 border border-slate-700 rounded-xl hover:border-red-500 transition-all";
+document.querySelectorAll('.t-opt').forEach(btn => btn.className += " " + tOptClass);
+
+/* ══ CORE LOGIC ══ */
+async function loadM3U() {
+    try {
+        const response = await fetch(M3U_URL);
+        const data = await response.text();
+        parseM3U(data);
+    } catch (err) {
+        channelList.innerHTML = `<div class="p-8 text-center text-red-400 text-xs font-bold">LİSTE YÜKLENEMEDİ</div>`;
     }
+}
+
+function parseM3U(text) {
+    const lines = text.split("\n");
+    allChannels = [];
+    
+    for (let i = 0; i < lines.length; i++) {
+        if (lines[i].startsWith("#EXTINF")) {
+            const line = lines[i];
+            const name = line.split(",")[1]?.trim() || "Bilinmeyen Kanal";
+            const url = lines[i + 1]?.trim() || "";
+            if (!url.startsWith("http")) continue;
+
+            // Better regex for attributes
+            const logo = line.match(/tvg-logo="([^"]*)"/i)?.[1] || "";
+            const group = line.match(/group-title="([^"]*)"/i)?.[1] || "Genel";
+
+            allChannels.push({ name, url, logo, group });
+        }
+    }
+    
     document.getElementById("ch-counter").textContent = allChannels.length + " KANAL";
     buildCats();
     renderList();
     renderRelated();
-  })
-  .catch(() => {
-    document.getElementById("channelList").innerHTML =
-      '<div style="padding:20px;color:var(--muted);font-size:13px;text-align:center">❌ Yükleme hatası</div>';
-  });
+}
 
-/* ── KATEGORİLER ── */
 function buildCats() {
-  const groups = ["", ...new Set(allChannels.map(c => c.group))].slice(0, 20);
-  const bar = document.getElementById("catBar");
-  bar.innerHTML = groups.map((g, i) =>
-    `<button class="cat-pill ${i === 0 ? "active" : ""}" onclick="filterCat('${g.replace(/'/g,"\\'")}',this)">${i === 0 ? "Tümü" : g}</button>`
-  ).join("");
+    const groups = ["Tümü", ...new Set(allChannels.map(c => c.group))].slice(0, 25);
+    const bar = document.getElementById("catBar");
+    bar.innerHTML = groups.map(g => `
+        <button onclick="filterCat('${g}', this)" 
+            class="cat-pill shrink-0 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border border-slate-800 transition-all
+            ${g === 'Tümü' ? 'bg-red-500 text-white border-red-500' : 'bg-slate-900 text-slate-500 hover:text-slate-300'}">
+            ${g}
+        </button>
+    `).join("");
 }
 
 function filterCat(cat, el) {
-  currentCat = cat;
-  document.querySelectorAll(".cat-pill").forEach(b => b.classList.remove("active"));
-  el.classList.add("active");
-  renderList();
+    currentCat = cat === "Tümü" ? "" : cat;
+    document.querySelectorAll(".cat-pill").forEach(p => {
+        p.className = "cat-pill shrink-0 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border border-slate-800 transition-all bg-slate-900 text-slate-500";
+    });
+    el.className = "cat-pill shrink-0 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border border-red-500 bg-red-500 text-white transition-all shadow-lg shadow-red-500/20";
+    renderList();
 }
 
-/* ── TAB SWITCH ── */
 function switchTab(tab, btn) {
-  currentTab = tab;
-  document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
-  btn.classList.add("active");
-  renderList();
+    currentTab = tab;
+    document.querySelectorAll(".tab-btn").forEach(b => {
+        b.classList.remove("bg-slate-800", "text-white", "shadow-lg");
+        b.classList.add("text-slate-500");
+    });
+    btn.classList.add("bg-slate-800", "text-white", "shadow-lg");
+    renderList();
 }
 
-/* ── SEARCH ── */
-function search(q) {
-  searchQ = q.toLowerCase();
-  renderList();
-}
-
-/* ── RENDER LIST ── */
 function renderList() {
-  let list = allChannels;
-  if (currentTab === "fav") list = list.filter(c => favorites.includes(c.url));
-  if (currentCat)           list = list.filter(c => c.group === currentCat);
-  if (searchQ)              list = list.filter(c => c.name.toLowerCase().includes(searchQ));
+    let list = allChannels;
+    if (currentTab === "fav") list = list.filter(c => favorites.includes(c.url));
+    if (currentCat) list = list.filter(c => c.group === currentCat);
+    if (searchQ) list = list.filter(c => c.name.toLowerCase().includes(searchQ));
 
-  document.getElementById("chCount").textContent = list.length + " kanal";
+    document.getElementById("chCount").textContent = `${list.length} KANAL BULUNDU`;
 
-  const el = document.getElementById("channelList");
+    if (!list.length) {
+        channelList.innerHTML = `<div class="py-20 text-center text-slate-600 text-[10px] font-bold tracking-[0.2em] uppercase">Sonuç Bulunamadı</div>`;
+        return;
+    }
 
-  if (!list.length) {
-    el.innerHTML = `<div style="text-align:center;padding:40px 16px;color:var(--muted);font-size:13px;">
-      ${currentTab === "fav" ? "⭐ Favori yok" : "🔍 Sonuç yok"}
-    </div>`;
-    return;
-  }
+    channelList.innerHTML = list.map(ch => {
+        const mainIdx = allChannels.indexOf(ch);
+        const isActive = currentCh?.url === ch.url;
+        const isFav = favorites.includes(ch.url);
+        
+        return `
+            <div onclick="play(${mainIdx})" 
+                class="group flex items-center gap-3 p-3 rounded-xl cursor-pointer transition-all border border-transparent
+                ${isActive ? 'bg-red-500/10 border-red-500/20' : 'hover:bg-slate-800/50'}">
+                
+                <div class="w-10 h-10 rounded-lg bg-slate-800 shrink-0 border border-slate-700/50 flex items-center justify-center overflow-hidden">
+                    ${ch.logo ? `<img src="${ch.logo}" class="w-full h-full object-contain p-1" onerror="this.outerHTML='📺'">` : '<span class="text-xs">📺</span>'}
+                </div>
 
-  el.innerHTML = list.map(ch => {
-    const idx   = allChannels.indexOf(ch);
-    const isAct = currentCh?.url === ch.url;
-    const isFav = favorites.includes(ch.url);
-    const logo  = ch.logo
-      ? `<img src="${ch.logo}" loading="lazy" onerror="this.outerHTML='<span>📺</span>'">`
-      : `<span>📺</span>`;
-    const u = ch.url.replace(/\\/g, "\\\\").replace(/'/g, "\\'");
+                <div class="flex-1 min-w-0">
+                    <h4 class="text-xs font-bold truncate uppercase tracking-tight ${isActive ? 'text-red-500' : 'text-slate-200'}">${ch.name}</h4>
+                    <p class="text-[10px] text-slate-500 font-medium truncate uppercase">${ch.group}</p>
+                </div>
 
-    return `
-      <div class="channel ${isAct ? "active" : ""}" onclick="play(${idx})">
-        <div class="ch-logo">${logo}</div>
-        <div class="ch-info">
-          <div class="ch-name">${ch.name}</div>
-          <div class="ch-meta">
-            <span class="live-badge">CANLI</span>
-            <span class="ch-group">${ch.group}</span>
-          </div>
-        </div>
-        <button class="fav-btn ${isFav ? "on" : ""}"
-          onclick="event.stopPropagation(); toggleFavorite('${u}', this)">
-          ${isFav ? "★" : "☆"}
-        </button>
-      </div>`;
-  }).join("");
+                <button onclick="event.stopPropagation(); toggleFavorite('${ch.url}', this)" 
+                    class="p-2 rounded-lg transition-colors ${isFav ? 'text-amber-500' : 'text-slate-600 hover:text-slate-400'}">
+                    <svg class="w-4 h-4" fill="${isFav ? 'currentColor' : 'none'}" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.175 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.382-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"/>
+                    </svg>
+                </button>
+            </div>
+        `;
+    }).join("");
 }
 
-/* ── PLAY (senin orijinal mantığın) ── */
-const video = document.getElementById("video");
-
+/* ── PLAYER ACTIONS ── */
 function play(idx) {
-  const ch = allChannels[idx];
-  if (!ch) return;
-  currentCh = ch;
+    const ch = allChannels[idx];
+    if (!ch) return;
+    currentCh = ch;
 
-  // Göster
-  document.getElementById("playerIdle").style.display = "none";
-  video.style.display = "block";
+    document.getElementById("playerIdle").classList.add("hidden");
+    video.classList.remove("hidden");
+    document.getElementById("onAirBadge").classList.remove("hidden");
 
-  // HLS — aynen senin kodundan
-  if (Hls.isSupported()) {
-    if (hls) hls.destroy();
-    hls = new Hls();
-    hls.loadSource(ch.url);
-    hls.attachMedia(video);
-    hls.on(Hls.Events.MANIFEST_PARSED, () => video.play().catch(() => {}));
-  } else if (video.canPlayType("application/vnd.apple.mpegurl")) {
-    video.src = ch.url;
-    video.play().catch(() => {});
-  } else {
-    video.src = ch.url;
-  }
+    if (hls) { hls.destroy(); hls = null; }
 
-  video.volume = document.querySelector(".vol-sl").value / 100;
+    if (Hls.isSupported()) {
+        hls = new Hls({ capLevelToPlayerSize: true });
+        hls.loadSource(ch.url);
+        hls.attachMedia(video);
+        hls.on(Hls.Events.MANIFEST_PARSED, () => video.play().catch(e => console.log("Autoplay blocked")));
+    } else if (video.canPlayType("application/vnd.apple.mpegurl")) {
+        video.src = ch.url;
+        video.play();
+    }
 
-  // Now Playing bar
-  const npLogo = document.getElementById("npLogo");
-  npLogo.innerHTML = ch.logo
-    ? `<img src="${ch.logo}" style="width:100%;height:100%;object-fit:contain;padding:2px;background:#0e1318" onerror="this.outerHTML='📺'">`
-    : "📺";
-
-  document.getElementById("npTitle").innerHTML  = `${ch.name} <span class="on-air">ON AIR</span>`;
-  document.getElementById("npGroup").textContent = ch.group;
-
-  updateFavBtn();
-  renderList();
-  showToast("▶ " + ch.name);
+    // Update UI
+    document.getElementById("npTitle").textContent = ch.name;
+    document.getElementById("npGroup").textContent = ch.group;
+    document.getElementById("npLogo").innerHTML = ch.logo ? `<img src="${ch.logo}" class="w-full h-full object-contain p-1">` : "📺";
+    
+    updateFavUI();
+    renderList();
+    showToast("BAĞLANILIYOR: " + ch.name);
 }
 
-/* ── STOP ── */
 function stopPlayer() {
-  if (hls) { hls.destroy(); hls = null; }
-  video.pause(); video.src = ""; video.style.display = "none";
-  document.getElementById("playerIdle").style.display = "flex";
-  currentCh = null;
-  document.getElementById("npTitle").innerHTML   = "Kanal Seçilmedi";
-  document.getElementById("npGroup").textContent = "Bir kanal seçin";
-  document.getElementById("npLogo").innerHTML    = "📺";
-  document.getElementById("favCurBtn").textContent = "☆";
-  document.getElementById("favCurBtn").style.color  = "";
-  renderList();
+    if (hls) { hls.destroy(); hls = null; }
+    video.pause(); video.src = "";
+    video.classList.add("hidden");
+    document.getElementById("playerIdle").classList.remove("hidden");
+    document.getElementById("onAirBadge").classList.add("hidden");
+    document.getElementById("npTitle").textContent = "Kanal Seçilmedi";
+    document.getElementById("npGroup").textContent = "Lütfen kanal listesine göz atın";
+    document.getElementById("npLogo").innerHTML = "📺";
+    currentCh = null;
+    renderList();
 }
 
-/* ── PREV / NEXT ── */
-function getFiltered() {
-  let list = allChannels;
-  if (currentTab === "fav") list = list.filter(c => favorites.includes(c.url));
-  if (currentCat)           list = list.filter(c => c.group === currentCat);
-  if (searchQ)              list = list.filter(c => c.name.toLowerCase().includes(searchQ));
-  return list;
+/* ── HELPERS ── */
+function search(q) {
+    searchQ = q.toLowerCase();
+    renderList();
 }
 
-function nextCh() {
-  const list = getFiltered();
-  if (!list.length) return;
-  const idx  = list.findIndex(c => c.url === currentCh?.url);
-  play(allChannels.indexOf(list[(idx + 1) % list.length]));
+function toggleFavorite(url, btn) {
+    if (favorites.includes(url)) {
+        favorites = favorites.filter(u => u !== url);
+        showToast("Favorilerden çıkarıldı");
+    } else {
+        favorites.push(url);
+        showToast("⭐ Favorilere eklendi");
+    }
+    localStorage.setItem("favorites", JSON.stringify(favorites));
+    updateFavUI();
+    renderList();
 }
 
-function prevCh() {
-  const list = getFiltered();
-  if (!list.length) return;
-  const idx  = list.findIndex(c => c.url === currentCh?.url);
-  play(allChannels.indexOf(list[(idx - 1 + list.length) % list.length]));
+function updateFavUI() {
+    if (!currentCh) return;
+    const isFav = favorites.includes(currentCh.url);
+    const btn = document.getElementById("favCurBtn");
+    btn.innerHTML = `<svg class="w-5 h-5" fill="${isFav ? 'currentColor' : 'none'}" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>`;
+    btn.className = isFav ? ctrlBtnClass.replace('text-slate-300', 'text-amber-500') : ctrlBtnClass;
+}
+
+function favToggleCurrent() {
+    if (currentCh) toggleFavorite(currentCh.url);
 }
 
 function setVol(v) { video.volume = v / 100; }
 
 function openFS() {
-  const el = document.querySelector(".player-ratio");
-  (el.requestFullscreen || el.webkitRequestFullscreen).call(el);
+    const wrap = video.parentElement;
+    if (wrap.requestFullscreen) wrap.requestFullscreen();
+    else if (wrap.webkitRequestFullscreen) wrap.webkitRequestFullscreen();
 }
 
-/* ── FAVORİLER (senin orijinal mantığın) ── */
-function toggleFavorite(url, btn) {
-  if (favorites.includes(url)) {
-    favorites = favorites.filter(u => u !== url);
-    btn.textContent = "☆";
-    btn.classList.remove("on");
-    showToast("Favorilerden çıkarıldı");
-  } else {
-    favorites.push(url);
-    btn.textContent = "★";
-    btn.classList.add("on");
-    showToast("⭐ Favorilere eklendi");
-  }
-  localStorage.setItem("favorites", JSON.stringify(favorites));
-  updateFavBtn();
-  renderList();
+function nextCh() {
+    const list = getActiveContextList();
+    if (!list.length) return;
+    const idx = list.findIndex(c => c.url === currentCh?.url);
+    play(allChannels.indexOf(list[(idx + 1) % list.length]));
 }
 
-function favToggleCurrent() {
-  if (!currentCh) return;
-  const btn = document.getElementById("favCurBtn");
-  toggleFavorite(currentCh.url, btn);
+function prevCh() {
+    const list = getActiveContextList();
+    if (!list.length) return;
+    const idx = list.findIndex(c => c.url === currentCh?.url);
+    play(allChannels.indexOf(list[(idx - 1 + list.length) % list.length]));
 }
 
-function updateFavBtn() {
-  if (!currentCh) return;
-  const on  = favorites.includes(currentCh.url);
-  const btn = document.getElementById("favCurBtn");
-  btn.textContent  = on ? "★" : "☆";
-  btn.style.color  = on ? "var(--gold)" : "";
+function getActiveContextList() {
+    let list = allChannels;
+    if (currentTab === "fav") list = list.filter(c => favorites.includes(c.url));
+    if (currentCat) list = list.filter(c => c.group === currentCat);
+    return list;
 }
 
-/* ── ÖNERILEN ── */
 function renderRelated() {
-  const pick = [...allChannels].sort(() => Math.random() - .5).slice(0, 10);
-  document.getElementById("relGrid").innerHTML = pick.map(ch => {
-    const idx = allChannels.indexOf(ch);
-    return `
-      <div class="rel-card" onclick="play(${idx})">
-        <div class="rc-icon">${ch.logo ? `<img src="${ch.logo}" onerror="this.outerHTML='📺'">` : "📺"}</div>
-        <div class="rc-name">${ch.name}</div>
-        <div class="rc-group">${ch.group}</div>
-      </div>`;
-  }).join("");
+    const grid = document.getElementById("relGrid");
+    const shuffle = [...allChannels].sort(() => 0.5 - Math.random()).slice(0, 12);
+    grid.innerHTML = shuffle.map(ch => `
+        <div onclick="play(${allChannels.indexOf(ch)})" class="bg-slate-900 border border-slate-800 p-4 rounded-2xl hover:bg-slate-800 hover:border-slate-700 transition-all cursor-pointer group">
+            <div class="aspect-square bg-slate-950 rounded-xl mb-3 flex items-center justify-center overflow-hidden border border-slate-800 group-hover:border-red-500/30 transition-all">
+                ${ch.logo ? `<img src="${ch.logo}" class="w-full h-full object-contain p-2" onerror="this.outerHTML='📺'">` : '📺'}
+            </div>
+            <h5 class="text-[10px] font-black text-slate-300 truncate uppercase tracking-tighter">${ch.name}</h5>
+        </div>
+    `).join("");
 }
 
 /* ── SLEEP TIMER ── */
-let sleepSel = 30, sleepTimer = null, cdInterval = null;
+let sleepMins = 30, sleepTimer, cdInt;
+function openSleep() { document.getElementById("sleepModal").classList.replace("hidden", "flex"); }
+function closeSleep() { document.getElementById("sleepModal").classList.replace("flex", "hidden"); }
 
-function pickTimer(min, el) {
-  sleepSel = min;
-  document.querySelectorAll(".t-opt").forEach(o => o.classList.remove("sel"));
-  el.classList.add("sel");
+function pickTimer(m, el) {
+    sleepMins = m;
+    document.querySelectorAll(".t-opt").forEach(o => o.classList.remove("border-red-500", "bg-red-500/10", "text-red-500"));
+    if (m !== 0) el.classList.add("border-red-500", "bg-red-500/10", "text-red-500");
 }
-
-function openSleep()  { document.getElementById("sleepModal").classList.add("open"); }
-function closeSleep() { document.getElementById("sleepModal").classList.remove("open"); }
 
 function startSleep() {
-  clearTimeout(sleepTimer); clearInterval(cdInterval);
-  if (sleepSel === 0) {
-    document.getElementById("timerCd").style.display = "none";
-    showToast("Zamanlayıcı iptal edildi"); closeSleep(); return;
-  }
-  sleepTimer = setTimeout(() => {
-    stopPlayer();
-    showToast("⏱ " + sleepSel + " dk doldu. Yayın durduruldu.");
-  }, sleepSel * 60000);
-  let rem = sleepSel * 60;
-  const cd = document.getElementById("timerCd"); cd.style.display = "block";
-  cdInterval = setInterval(() => {
-    rem--;
-    if (rem <= 0) { clearInterval(cdInterval); cd.style.display = "none"; return; }
-    cd.textContent = "⏱ Kalan: " + Math.floor(rem / 60) + ":" + String(rem % 60).padStart(2, "0");
-  }, 1000);
-  showToast("⏱ " + sleepSel + " dk sonra kapanacak"); closeSleep();
+    clearTimeout(sleepTimer); clearInterval(cdInt);
+    if (sleepMins === 0) {
+        showToast("ZAMANLAYICI İPTAL EDİLDİ");
+        closeSleep(); return;
+    }
+    const end = Date.now() + (sleepMins * 60000);
+    sleepTimer = setTimeout(stopPlayer, sleepMins * 60000);
+    
+    document.getElementById("timerCd").classList.remove("hidden");
+    cdInt = setInterval(() => {
+        const rem = Math.round((end - Date.now()) / 1000);
+        if (rem <= 0) { clearInterval(cdInt); document.getElementById("timerCd").classList.add("hidden"); }
+        document.getElementById("timerCd").textContent = `KAPANACAK: ${Math.floor(rem/60)}:${(rem%60).toString().padStart(2,'0')}`;
+    }, 1000);
+    
+    showToast(`${sleepMins} DAKİKA SONRA KAPANACAK`);
+    closeSleep();
 }
 
-document.getElementById("sleepModal").addEventListener("click", e => {
-  if (e.target === document.getElementById("sleepModal")) closeSleep();
-});
-
-/* ── TOAST ── */
-let toastT;
 function showToast(msg) {
-  const t = document.getElementById("toast");
-  t.textContent = msg; t.classList.add("show");
-  clearTimeout(toastT);
-  toastT = setTimeout(() => t.classList.remove("show"), 2800);
+    const t = document.getElementById("toast");
+    t.textContent = msg;
+    t.classList.replace("opacity-0", "opacity-100");
+    t.classList.replace("translate-y-4", "translate-y-0");
+    setTimeout(() => {
+        t.classList.replace("opacity-100", "opacity-0");
+        t.classList.replace("translate-y-0", "translate-y-4");
+    }, 2500);
 }
 
-/* ── KEYBOARD ── */
+// Hotkeys
 document.addEventListener("keydown", e => {
-  if (e.target.tagName === "INPUT") return;
-  if (e.key === "ArrowRight") nextCh();
-  if (e.key === "ArrowLeft")  prevCh();
-  if (e.key === "Escape")     stopPlayer();
-  if (e.key === "f" || e.key === "F") openFS();
-  if (e.key === "m" || e.key === "M") {
-    video.muted = !video.muted;
-    showToast(video.muted ? "🔇 Sessiz" : "🔊 Ses Açık");
-  }
+    if (e.target.tagName === "INPUT") return;
+    if (e.key === "ArrowRight") nextCh();
+    if (e.key === "ArrowLeft") prevCh();
+    if (e.key === "Escape") stopPlayer();
+    if (e.key === "f") openFS();
 });
+
+loadM3U();
 </script>
 </body>
 </html>
